@@ -7,7 +7,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
 class PdpClient(
-    private val url: String,
+    private val baseUrl: String,
     private val subscriptionKey: String,
     private val ressurs: String,
     private val getToken: () -> String
@@ -22,7 +22,7 @@ class PdpClient(
 
     private suspend fun pdpKall(bruker: Bruker, orgnr: String): PdpResponse {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
-        val pdpResponse: PdpResponse = httpClient.post(url) {
+        val pdpResponse: PdpResponse = httpClient.post("$baseUrl/authorization/api/v1/authorize") {
             bearerAuth(getToken())
             header("Ocp-Apim-Subscription-Key", subscriptionKey)
             header("Content-Type", "application/json")

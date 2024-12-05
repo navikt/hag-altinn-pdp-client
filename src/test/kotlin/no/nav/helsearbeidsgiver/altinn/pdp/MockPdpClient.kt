@@ -10,20 +10,19 @@ import io.ktor.http.headersOf
 import io.mockk.every
 import no.nav.helsearbeidsgiver.utils.test.mock.mockStatic
 
-
 fun mockPdpClient(status: HttpStatusCode, content: String = ""): PdpClient {
     val mockEngine = MockEngine {
         respond(
             content = content,
             status = status,
-            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         )
     }
 
-    val mockHttpClient = HttpClient(mockEngine) { customize() }
+    val mockHttpClient = HttpClient(mockEngine) { configure(1) }
 
     return mockStatic(::createHttpClient) {
-        every { createHttpClient() } returns mockHttpClient
-        PdpClient("url", "key", { "" })
+        every { createHttpClient(any()) } returns mockHttpClient
+        PdpClient("url", "key", "test_ressurs", { "" })
     }
 }

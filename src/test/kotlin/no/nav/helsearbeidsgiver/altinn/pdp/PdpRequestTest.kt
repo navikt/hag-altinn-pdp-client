@@ -5,12 +5,19 @@ import io.kotest.matchers.string.shouldContain
 import no.nav.helsearbeidsgiver.utils.json.jsonConfig
 
 class PdpRequestTest : FunSpec({
-
-    val requestBody = lagPdpRequest("01017012345", "312824450","nav_sykepenger_inntektsmelding-nedlasting")
-    test("Serialialiser request til string") {
-        val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), requestBody)
-        requestString shouldContain "01017012345"
+    test("Serialialiser request for person riktig") {
+        val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), Mock.pdpPersonRequest)
+        requestString shouldContain Mock.fnr
         requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
-        requestString shouldContain "312824450"
+        requestString shouldContain "urn:altinn:person:identifier-no"
+        requestString shouldContain Mock.orgnr
+    }
+
+    test("Serialialiser request for systembruker riktig") {
+        val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), Mock.pdpSystemRequest)
+        requestString shouldContain Mock.systembrukerId
+        requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
+        requestString shouldContain "urn:altinn:systemuser:uuid"
+        requestString shouldContain Mock.orgnr
     }
 })

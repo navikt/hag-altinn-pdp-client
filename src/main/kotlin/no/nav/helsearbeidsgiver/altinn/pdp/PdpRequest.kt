@@ -26,53 +26,56 @@ data class PdpRequest(
         val dataType: String? = null
     )
 }
-//TODO ha en egen construktør for dette
-fun lagPdpRequest(fnr: String, orgnr: String, ressurs: String) =
+
+sealed class Bruker(val id: String, val attributeId: String)
+class Person(id: String) : Bruker(id, "urn:altinn:person:identifier-no")
+class System(id: String) : Bruker(id, "urn:altinn:systemuser:uuid")
+
+fun lagPdpRequest(bruker: Bruker, orgnr: String, ressurs: String) =
     PdpRequest(
         request =
-            PdpRequest.XacmlJsonRequestExternal(
-                returnPolicyIdList = true,
-                accessSubject =
+        PdpRequest.XacmlJsonRequestExternal(
+            returnPolicyIdList = true,
+            accessSubject =
+            listOf(
+                PdpRequest.XacmlJsonCategoryExternal(
+                    attribute =
                     listOf(
-                        PdpRequest.XacmlJsonCategoryExternal(
-                            attribute =
-                                listOf(
-                                    PdpRequest.XacmlJsonAttributeExternal(
-                                        attributeId = "urn:altinn:person:identifier-no",
-                                        value = fnr
-                                    )
-                                )
-                        )
-                    ),
-                action =
-                    listOf(
-                        PdpRequest.XacmlJsonCategoryExternal(
-                            attribute =
-                                listOf(
-                                    PdpRequest.XacmlJsonAttributeExternal(
-                                        attributeId = "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                                        value = "write",
-                                        dataType = "http://www.w3.org/2001/XMLSchema#string"
-                                    )
-                                )
-                        )
-                    ),
-                resource =
-                    listOf(
-                        PdpRequest.XacmlJsonCategoryExternal(
-                            attribute =
-                                listOf(
-                                    PdpRequest.XacmlJsonAttributeExternal(
-                                        attributeId = "urn:altinn:resource",
-                                        value = ressurs
-                                    ),
-                                    PdpRequest.XacmlJsonAttributeExternal(
-                                        attributeId = "urn:altinn:organization:identifier-no",
-                                        value = orgnr
-                                    )
-                                )
+                        PdpRequest.XacmlJsonAttributeExternal(
+                            attributeId = bruker.attributeId,
+                            value = bruker.id
                         )
                     )
+                )
+            ),
+            action =
+            listOf(
+                PdpRequest.XacmlJsonCategoryExternal(
+                    attribute =
+                    listOf(
+                        PdpRequest.XacmlJsonAttributeExternal(
+                            attributeId = "urn:oasis:names:tc:xacml:1.0:action:action-id",
+                            value = "write",
+                            dataType = "http://www.w3.org/2001/XMLSchema#string"
+                        )
+                    )
+                )
+            ),
+            resource =
+            listOf(
+                PdpRequest.XacmlJsonCategoryExternal(
+                    attribute =
+                    listOf(
+                        PdpRequest.XacmlJsonAttributeExternal(
+                            attributeId = "urn:altinn:resource",
+                            value = ressurs
+                        ),
+                        PdpRequest.XacmlJsonAttributeExternal(
+                            attributeId = "urn:altinn:organization:identifier-no",
+                            value = orgnr
+                        )
+                    )
+                )
             )
+        )
     )
-

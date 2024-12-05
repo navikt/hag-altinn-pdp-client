@@ -1,17 +1,34 @@
 package no.nav.helsearbeidsgiver.altinn.pdp
 
+import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.http.HttpStatusCode
 
 class PdpClientTest : FunSpec({
-    val pdpClient = mockPdpClient(HttpStatusCode.Created, "{}")
-    val requestBody = lagPdpRequest("01017012345", "312824450","nav_sykepenger_inntektsmelding-nedlasting")
     test("Pdp oppslag gir Permit") {
-        pdpClient.harRettighetForOrganisasjon("01017012345","312824450" ) shouldBe true
+        val pdpClient = mockPdpClient(HttpStatusCode.Created, Mock.permitResponseString)
+        pdpClient.personHarRettighetForOrganisasjon(Mock.fnr, Mock.orgnr) shouldBe true
+    }
+
+    test("Håndterer hvis kallet timer ut") {
+        val pdpClient = mockPdpClient(HttpStatusCode.GatewayTimeout)
+        shouldThrowExactly<ServerResponseException> {
+            pdpClient.personHarRettighetForOrganisasjon(Mock.fnr, Mock.orgnr)
+        }
+    }
+
+    test("Pdp oppslag for personbruker gir Permit") {
+        val pdpClient = mockPdpClient(HttpStatusCode.Created, Mock.permitResponseString)
+        pdpClient.systemHarRettighetForOrganisasjon(Mock.systembrukerId, Mock.orgnr) shouldBe true
+    }
+
+    test("Kaster feil ved Unauthorized") {
+        val pdpClient = mockPdpClient(HttpStatusCode.Unauthorized)
+        shouldThrowExactly<ClientRequestException> {
+            pdpClient.personHarRettighetForOrganisasjon(Mock.fnr, Mock.orgnr)
+        }
     }
 })
-
-object Mock{
-    val fnr = "01017012345"
-}

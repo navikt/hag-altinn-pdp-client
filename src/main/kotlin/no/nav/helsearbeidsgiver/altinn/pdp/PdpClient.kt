@@ -15,20 +15,28 @@ class PdpClient(
     private val httpClient = createHttpClient(3)
 
     suspend fun personHarRettighetForOrganisasjon(fnr: String, orgnr: String): Boolean =
-        pdpKall(Person(fnr), orgnr).harTilgang()
+        pdpKall(Person(fnr), orgnr).getOrThrow().harTilgang()
 
     suspend fun systemHarRettighetForOrganisasjon(systembrukerId: String, orgnr: String): Boolean =
-        pdpKall(System(systembrukerId), orgnr).harTilgang()
+        pdpKall(System(systembrukerId), orgnr).getOrThrow().harTilgang()
 
-    private suspend fun pdpKall(bruker: Bruker, orgnr: String): PdpResponse {
+    private suspend fun pdpKall(bruker: Bruker, orgnr: String): Result<PdpResponse> {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
-        val pdpResponse: PdpResponse = httpClient.post("$baseUrl/authorization/api/v1/authorize") {
-            bearerAuth(getToken())
-            header("Ocp-Apim-Subscription-Key", subscriptionKey)
-            header("Content-Type", "application/json")
-            header("Accept", "application/json")
-            setBody(pdpRequest)
-        }.body()
-        return pdpResponse
+        val pdpResponseResult: Result<PdpResponse> = runCatching<PdpClient, PdpResponse> {
+            httpClient.post("$baseUrl/authorization/api/v1/authorize") {
+                bearerAuth(getToken())
+                header("Ocp-Apim-Subscription-Key", subscriptionKey)
+                header("Content-Type", "application/json")
+                header("Accept", "application/json")
+                setBody(pdpRequest)
+            }.body()
+        }.recover {
+            throw PdpClientException()
+        }
+        return pdpResponseResult
     }
 }
+
+class PdpClientException() : Exception(
+    "Feil ved kall til pdp endepunkt"
+)

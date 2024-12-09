@@ -3,8 +3,6 @@ package no.nav.helsearbeidsgiver.altinn.pdp
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.ServerResponseException
 import io.ktor.http.HttpStatusCode
 
 class PdpClientTest : FunSpec({
@@ -15,7 +13,7 @@ class PdpClientTest : FunSpec({
 
     test("Håndterer hvis kallet timer ut") {
         val pdpClient = mockPdpClient(HttpStatusCode.GatewayTimeout)
-        shouldThrowExactly<ServerResponseException> {
+        shouldThrowExactly<PdpClientException> {
             pdpClient.personHarRettighetForOrganisasjon(Mock.fnr, Mock.orgnr)
         }
     }
@@ -27,7 +25,7 @@ class PdpClientTest : FunSpec({
 
     test("Kaster feil ved Unauthorized") {
         val pdpClient = mockPdpClient(HttpStatusCode.Unauthorized)
-        shouldThrowExactly<ClientRequestException> {
+        shouldThrowExactly<PdpClientException> {
             pdpClient.personHarRettighetForOrganisasjon(Mock.fnr, Mock.orgnr)
         }
     }

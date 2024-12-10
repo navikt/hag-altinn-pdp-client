@@ -5,38 +5,52 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import no.nav.helsearbeidsgiver.utils.log.logger
 
 class PdpClient(
     private val baseUrl: String,
     private val subscriptionKey: String,
     private val ressurs: String,
-    private val getToken: () -> String
+    private val getToken: () -> String,
 ) {
     private val httpClient = createHttpClient(3)
 
-    suspend fun personHarRettighetForOrganisasjon(fnr: String, orgnr: String): Boolean =
-        pdpKall(Person(fnr), orgnr).getOrThrow().harTilgang()
+    private val logger = this.logger()
 
-    suspend fun systemHarRettighetForOrganisasjon(systembrukerId: String, orgnr: String): Boolean =
-        pdpKall(System(systembrukerId), orgnr).getOrThrow().harTilgang()
+    suspend fun personHarRettighetForOrganisasjon(
+        fnr: String,
+        orgnr: String,
+    ): Boolean = pdpKall(Person(fnr), orgnr).getOrThrow().harTilgang()
 
-    private suspend fun pdpKall(bruker: Bruker, orgnr: String): Result<PdpResponse> {
+    suspend fun systemHarRettighetForOrganisasjon(
+        systembrukerId: String,
+        orgnr: String,
+    ): Boolean = pdpKall(System(systembrukerId), orgnr).getOrThrow().harTilgang()
+
+    private suspend fun pdpKall(
+        bruker: Bruker,
+        orgnr: String,
+    ): Result<PdpResponse> {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
-        val pdpResponseResult: Result<PdpResponse> = runCatching<PdpClient, PdpResponse> {
-            httpClient.post("$baseUrl/authorization/api/v1/authorize") {
-                bearerAuth(getToken())
-                header("Ocp-Apim-Subscription-Key", subscriptionKey)
-                header("Content-Type", "application/json")
-                header("Accept", "application/json")
-                setBody(pdpRequest)
-            }.body()
-        }.recover {
-            throw PdpClientException()
-        }
+        val pdpResponseResult: Result<PdpResponse> =
+            runCatching<PdpClient, PdpResponse> {
+                httpClient
+                    .post("$baseUrl/authorization/api/v1/authorize") {
+                        bearerAuth(getToken())
+                        header("Ocp-Apim-Subscription-Key", subscriptionKey)
+                        header("Content-Type", "application/json")
+                        header("Accept", "application/json")
+                        setBody(pdpRequest)
+                    }.body()
+            }.recover {
+                logger.error("Feil ved kall til pdp endepunkt")
+                throw PdpClientException()
+            }
         return pdpResponseResult
     }
 }
 
-class PdpClientException() : Exception(
-    "Feil ved kall til pdp endepunkt"
-)
+class PdpClientException :
+    Exception(
+        "Feil ved kall til pdp endepunkt",
+    )

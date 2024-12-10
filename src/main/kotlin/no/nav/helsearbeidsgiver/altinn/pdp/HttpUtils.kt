@@ -11,8 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import no.nav.helsearbeidsgiver.utils.json.jsonConfig
 
-internal fun createHttpClient(maxRetries: Int): HttpClient =
-    HttpClient(Apache5) { configure(maxRetries) }
+internal fun createHttpClient(maxRetries: Int): HttpClient = HttpClient(Apache5) { configure(maxRetries) }
 
 internal fun HttpClientConfig<*>.configure(retries: Int) {
     expectSuccess = true

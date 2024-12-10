@@ -10,14 +10,18 @@ import io.ktor.http.headersOf
 import io.mockk.every
 import no.nav.helsearbeidsgiver.utils.test.mock.mockStatic
 
-fun mockPdpClient(status: HttpStatusCode, content: String = ""): PdpClient {
-    val mockEngine = MockEngine {
-        respond(
-            content = content,
-            status = status,
-            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-        )
-    }
+fun mockPdpClient(
+    status: HttpStatusCode,
+    content: String = "",
+): PdpClient {
+    val mockEngine =
+        MockEngine {
+            respond(
+                content = content,
+                status = status,
+                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+            )
+        }
 
     val mockHttpClient = HttpClient(mockEngine) { configure(1) }
 

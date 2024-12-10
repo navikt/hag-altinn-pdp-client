@@ -11,5 +11,9 @@ object Mock {
     val ressurs = "nav_sykepenger_inntektsmelding-nedlasting"
     val pdpPersonRequest = lagPdpRequest(person, orgnr, ressurs)
     val pdpSystemRequest = lagPdpRequest(system, orgnr, ressurs)
-    val permitResponseString: String = jsonConfig.encodeToString(PdpResponse.serializer(), PdpResponse(listOf(DecisionResult(Decision.Permit))))
+    val permitResponseString: String =
+        jsonConfig.encodeToString(
+            PdpResponse.serializer(),
+            PdpResponse(listOf(DecisionResult(Decision.Permit))),
+        )
 }

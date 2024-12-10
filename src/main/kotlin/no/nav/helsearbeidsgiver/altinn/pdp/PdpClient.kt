@@ -5,6 +5,7 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import no.nav.helsearbeidsgiver.utils.log.logger
 
 class PdpClient(
     private val baseUrl: String,
@@ -13,6 +14,8 @@ class PdpClient(
     private val getToken: () -> String
 ) {
     private val httpClient = createHttpClient(3)
+
+    private val logger = this.logger()
 
     suspend fun personHarRettighetForOrganisasjon(fnr: String, orgnr: String): Boolean =
         pdpKall(Person(fnr), orgnr).getOrThrow().harTilgang()
@@ -31,6 +34,7 @@ class PdpClient(
                 setBody(pdpRequest)
             }.body()
         }.recover {
+            logger.error("Feil ved kall til pdp endepunkt")
             throw PdpClientException()
         }
         return pdpResponseResult

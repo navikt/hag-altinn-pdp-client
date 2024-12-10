@@ -2,7 +2,7 @@ package no.nav.helsearbeidsgiver.altinn.pdp
 
 import no.nav.helsearbeidsgiver.utils.json.jsonConfig
 
-object Mock {
+object MockData {
     val fnr = "01017012345"
     val orgnr = "312824450"
     val systembrukerId = "1234"

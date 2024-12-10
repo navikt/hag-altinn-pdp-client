@@ -60,10 +60,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
 fun RepositoryHandler.mavenNav(repo: String): MavenArtifactRepository {
     val githubPassword: String by project
 

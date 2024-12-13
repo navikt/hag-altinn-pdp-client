@@ -55,7 +55,7 @@ class PdpClient(
     }
 }
 
-class PdpClientException() :
+class PdpClientException :
     Exception(
         "Feil ved kall til pdp endepunkt",
     )

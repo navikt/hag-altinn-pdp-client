@@ -6,6 +6,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 
 class PdpClient(
     private val baseUrl: String,
@@ -16,6 +17,7 @@ class PdpClient(
     private val httpClient = createHttpClient(3)
 
     private val logger = this.logger()
+    private val sikkerLogger = sikkerLogger()
 
     suspend fun personHarRettighetForOrganisasjon(
         fnr: String,
@@ -42,15 +44,18 @@ class PdpClient(
                         header("Accept", "application/json")
                         setBody(pdpRequest)
                     }.body()
-            }.recover {
-                logger.error("Feil ved kall til pdp endepunkt")
+            }.recover { e ->
+                "Feil ved kall til pdp endepunkt".also {
+                    logger.error(it)
+                    sikkerLogger.error(it, e)
+                }
                 throw PdpClientException()
             }
         return pdpResponseResult
     }
 }
 
-class PdpClientException :
+class PdpClientException() :
     Exception(
         "Feil ved kall til pdp endepunkt",
     )

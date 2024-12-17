@@ -22,11 +22,9 @@ fun mockPdpClient(
                 headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
             )
         }
-
-    val mockHttpClient = HttpClient(mockEngine) { configure(1) }
-
+    val mockHttpClient = HttpClient(mockEngine) { configure(1) { "" } }
     return mockStatic(::createHttpClient) {
-        every { createHttpClient(any()) } returns mockHttpClient
-        PdpClient("url", "key", "test_ressurs", { "" })
+        every { createHttpClient(any(), any()) } returns mockHttpClient
+        PdpClient("url", "key", "test_ressurs") { "" }
     }
 }

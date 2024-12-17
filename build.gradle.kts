@@ -7,7 +7,7 @@ plugins {
     id("maven-publish")
 }
 group = "no.nav.helsearbeidsgiver"
-version = "0.0.2"
+version = "0.0.3"
 
 kotlin {
     compilerOptions {
@@ -43,6 +43,7 @@ dependencies {
     val mockkVersion: String by project
 
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")

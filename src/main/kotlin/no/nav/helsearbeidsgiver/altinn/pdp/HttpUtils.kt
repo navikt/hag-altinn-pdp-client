@@ -27,10 +27,11 @@ internal fun HttpClientConfig<*>.configure(
     install(ContentNegotiation) {
         json(jsonConfig)
     }
-    var token = BearerTokens(getToken(), "")
+    var token: BearerTokens
     install(Auth) {
         bearer {
             loadTokens {
+                token = BearerTokens(getToken(), "")
                 token
             }
             refreshTokens {

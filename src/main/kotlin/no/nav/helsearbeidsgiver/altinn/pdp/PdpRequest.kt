@@ -67,7 +67,7 @@ fun lagPdpRequest(
                             listOf(
                                 PdpRequest.XacmlJsonAttributeExternal(
                                     attributeId = "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                                    value = "write",
+                                    value = "read",
                                     dataType = "http://www.w3.org/2001/XMLSchema#string",
                                 ),
                             ),

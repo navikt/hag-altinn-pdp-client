@@ -9,25 +9,25 @@ class PdpClientTest :
     FunSpec({
         test("Pdp oppslag gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
-            pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr) shouldBe true
+            pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr, MockData.ressurs) shouldBe true
         }
 
         test("Håndterer hvis kallet timer ut") {
             val pdpClient = mockPdpClient(HttpStatusCode.GatewayTimeout)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr)
+                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr, MockData.ressurs)
             }
         }
 
         test("Pdp oppslag for personbruker gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
-            pdpClient.systemHarRettighetForOrganisasjon(MockData.systembrukerId, MockData.orgnr) shouldBe true
+            pdpClient.systemHarRettighetForOrganisasjon(MockData.systembrukerId, MockData.orgnr, MockData.ressurs) shouldBe true
         }
 
         test("Kaster feil ved Unauthorized") {
             val pdpClient = mockPdpClient(HttpStatusCode.Unauthorized)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr)
+                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnr, MockData.ressurs)
             }
         }
     })

@@ -25,6 +25,6 @@ fun mockPdpClient(
     val mockHttpClient = HttpClient(mockEngine) { configure(1) { "" } }
     return mockStatic(::createHttpClient) {
         every { createHttpClient(any(), any()) } returns mockHttpClient
-        PdpClient("url", "key", "test_ressurs") { "" }
+        PdpClient("url", "key") { "" }
     }
 }

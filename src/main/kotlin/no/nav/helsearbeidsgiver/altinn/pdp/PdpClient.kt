@@ -10,7 +10,6 @@ import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 class PdpClient(
     private val baseUrl: String,
     private val subscriptionKey: String,
-    private val ressurs: String,
     private val getToken: () -> String,
 ) {
     private val httpClient = createHttpClient(3, getToken)
@@ -21,16 +20,19 @@ class PdpClient(
     suspend fun personHarRettighetForOrganisasjon(
         fnr: String,
         orgnr: String,
-    ): Boolean = pdpKall(Person(fnr), orgnr).getOrThrow().harTilgang()
+        ressurs: String,
+    ): Boolean = pdpKall(Person(fnr), orgnr, ressurs).getOrThrow().harTilgang()
 
     suspend fun systemHarRettighetForOrganisasjon(
         systembrukerId: String,
         orgnr: String,
-    ): Boolean = pdpKall(System(systembrukerId), orgnr).getOrThrow().harTilgang()
+        ressurs: String,
+    ): Boolean = pdpKall(System(systembrukerId), orgnr, ressurs).getOrThrow().harTilgang()
 
     private suspend fun pdpKall(
         bruker: Bruker,
         orgnr: String,
+        ressurs: String,
     ): Result<PdpResponse> {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
         val pdpResponseResult: Result<PdpResponse> =

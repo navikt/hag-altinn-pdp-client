@@ -35,6 +35,7 @@ class PdpClient(
         ressurs: String,
     ): Result<PdpResponse> {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
+        sikkerLogger.info("PDP kall for $ressurs: $pdpRequest")
         val pdpResponseResult: Result<PdpResponse> =
             runCatching<PdpClient, PdpResponse> {
                 httpClient
@@ -51,6 +52,7 @@ class PdpClient(
                 }
                 throw PdpClientException()
             }
+        sikkerLogger.info("PDP respons: $pdpResponseResult")
         return pdpResponseResult
     }
 }

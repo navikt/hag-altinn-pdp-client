@@ -29,12 +29,45 @@ class PdpClient(
         ressurs: String,
     ): Boolean = pdpKall(System(systembrukerId), orgnr, ressurs).getOrThrow().harTilgang()
 
+    suspend fun systemHarRettighetForOrganisasjoner(
+        systembrukerId: String,
+        orgnrSet: Set<String>,
+        ressurs: String,
+    ): Boolean = pdpKall(System(systembrukerId), orgnrSet, ressurs).getOrThrow().harTilgang()
+
     private suspend fun pdpKall(
         bruker: Bruker,
         orgnr: String,
         ressurs: String,
     ): Result<PdpResponse> {
         val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
+        sikkerLogger.info("PDP kall for $ressurs: $pdpRequest")
+        val pdpResponseResult: Result<PdpResponse> =
+            runCatching<PdpClient, PdpResponse> {
+                httpClient
+                    .post("$baseUrl/authorization/api/v1/authorize") {
+                        header("Ocp-Apim-Subscription-Key", subscriptionKey)
+                        header("Content-Type", "application/json")
+                        header("Accept", "application/json")
+                        setBody(pdpRequest)
+                    }.body()
+            }.recover { e ->
+                "Feil ved kall til pdp endepunkt".also {
+                    logger.error(it)
+                    sikkerLogger.error(it, e)
+                }
+                throw PdpClientException()
+            }
+        sikkerLogger.info("PDP respons: $pdpResponseResult")
+        return pdpResponseResult
+    }
+
+    private suspend fun pdpKall(
+        bruker: Bruker,
+        orgnrSet: Set<String>,
+        ressurs: String,
+    ): Result<PdpResponse> {
+        val pdpRequest = lagPdpRequest(bruker, orgnrSet, ressurs)
         sikkerLogger.info("PDP kall for $ressurs: $pdpRequest")
         val pdpResponseResult: Result<PdpResponse> =
             runCatching<PdpClient, PdpResponse> {

@@ -19,6 +19,6 @@ class PdpRequestTest :
             requestString shouldContain MockData.systembrukerId
             requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
             requestString shouldContain "urn:altinn:systemuser:uuid"
-            requestString shouldContain MockData.orgnr
+            MockData.orgnumre.forEach { requestString shouldContain it }
         }
     })

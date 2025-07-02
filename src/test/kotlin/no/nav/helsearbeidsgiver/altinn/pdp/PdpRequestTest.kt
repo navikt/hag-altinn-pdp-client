@@ -11,7 +11,7 @@ class PdpRequestTest :
             requestString shouldContain MockData.fnr
             requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
             requestString shouldContain "urn:altinn:person:identifier-no"
-            requestString shouldContain MockData.orgnr
+            MockData.orgnumre.forEach { requestString shouldContain it }
         }
 
         test("Serialialiser request for systembruker riktig") {

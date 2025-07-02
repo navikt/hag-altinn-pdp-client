@@ -9,31 +9,40 @@ class PdpClientTest :
     FunSpec({
         test("Pdp oppslag for personbruker gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
-            pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnumre, MockData.ressurs) shouldBe true
+            pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs) shouldBe true
         }
 
         test("Håndterer hvis personbruker-kallet timer ut") {
             val pdpClient = mockPdpClient(HttpStatusCode.GatewayTimeout)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnumre, MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs)
             }
         }
 
         test("Kaster feil ved Unauthorized for personbruker") {
             val pdpClient = mockPdpClient(HttpStatusCode.Unauthorized)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, MockData.orgnumre, MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs)
             }
         }
 
         test("Kaster feil dersom man ikke gir organisasjonsnumre for personbruker") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
             shouldThrowExactly<IllegalArgumentException> {
-                pdpClient.personHarRettighetForOrganisasjon(MockData.fnr, emptySet(), MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, emptySet(), MockData.ressurs)
             }
         }
 
-        test("Pdp oppslag for systembruker gir Permit") {
+        test("Pdp oppslag for systembruker med ett orgnummer gir Permit") {
+            val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
+            pdpClient.systemHarRettighetForOrganisasjoner(
+                MockData.systembrukerId,
+                setOf(MockData.orgnr),
+                MockData.ressurs,
+            ) shouldBe true
+        }
+
+        test("Pdp oppslag for systembruker med flere orgnumre gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
             pdpClient.systemHarRettighetForOrganisasjoner(
                 MockData.systembrukerId,

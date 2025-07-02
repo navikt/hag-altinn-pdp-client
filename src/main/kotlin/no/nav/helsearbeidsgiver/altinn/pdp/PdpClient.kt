@@ -17,7 +17,7 @@ class PdpClient(
     private val logger = this.logger()
     private val sikkerLogger = sikkerLogger()
 
-    suspend fun personHarRettighetForOrganisasjon(
+    suspend fun personHarRettighetForOrganisasjoner(
         fnr: String,
         orgnumre: Set<String>,
         ressurs: String,

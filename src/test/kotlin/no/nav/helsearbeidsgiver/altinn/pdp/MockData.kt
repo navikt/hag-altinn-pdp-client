@@ -9,8 +9,8 @@ object MockData {
     val systembrukerId = "1234"
     val person = Person(fnr)
     val system = System(systembrukerId)
-    val ressurs = "nav_sykepenger_inntektsmelding-nedlasting"
-    val pdpPersonRequest = lagPdpRequest(person, setOf(orgnr), ressurs)
+    val ressurs = "nav_system_sykepenger_inntektsmelding"
+    val pdpPersonRequest = lagPdpRequest(person, orgnumre, ressurs)
     val pdpSystemRequest = lagPdpRequest(system, orgnumre, ressurs)
     val permitResponseString: String =
         jsonConfig.encodeToString(

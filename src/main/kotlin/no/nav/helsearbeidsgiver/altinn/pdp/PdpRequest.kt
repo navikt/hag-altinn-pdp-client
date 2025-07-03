@@ -42,7 +42,7 @@ class System(
 
 fun lagPdpRequest(
     bruker: Bruker,
-    orgnr: String,
+    orgnrSet: Set<String>,
     ressurs: String,
 ) = PdpRequest(
     request =
@@ -74,7 +74,7 @@ fun lagPdpRequest(
                     ),
                 ),
             resource =
-                listOf(
+                orgnrSet.map { orgnr ->
                     PdpRequest.XacmlJsonCategoryExternal(
                         attribute =
                             listOf(
@@ -87,7 +87,7 @@ fun lagPdpRequest(
                                     value = orgnr,
                                 ),
                             ),
-                    ),
-                ),
+                    )
+                },
         ),
 )

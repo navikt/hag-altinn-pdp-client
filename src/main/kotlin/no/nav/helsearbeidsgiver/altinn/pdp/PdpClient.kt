@@ -17,24 +17,31 @@ class PdpClient(
     private val logger = this.logger()
     private val sikkerLogger = sikkerLogger()
 
-    suspend fun personHarRettighetForOrganisasjon(
+    suspend fun personHarRettighetForOrganisasjoner(
         fnr: String,
-        orgnr: String,
+        orgnumre: Set<String>,
         ressurs: String,
-    ): Boolean = pdpKall(Person(fnr), orgnr, ressurs).getOrThrow().harTilgang()
+    ): Boolean = pdpKall(Person(fnr), orgnumre, ressurs).getOrThrow().harTilgang()
 
-    suspend fun systemHarRettighetForOrganisasjon(
+    suspend fun systemHarRettighetForOrganisasjoner(
         systembrukerId: String,
-        orgnr: String,
+        orgnumre: Set<String>,
         ressurs: String,
-    ): Boolean = pdpKall(System(systembrukerId), orgnr, ressurs).getOrThrow().harTilgang()
+    ): Boolean = pdpKall(System(systembrukerId), orgnumre, ressurs).getOrThrow().harTilgang()
 
     private suspend fun pdpKall(
         bruker: Bruker,
-        orgnr: String,
+        orgnumre: Set<String>,
         ressurs: String,
     ): Result<PdpResponse> {
-        val pdpRequest = lagPdpRequest(bruker, orgnr, ressurs)
+        if (orgnumre.isEmpty()) {
+            "Ingen organisasjonsnumre gitt for pdp-kall".also {
+                logger.warn(it)
+                sikkerLogger.warn(it)
+                throw IllegalArgumentException(it)
+            }
+        }
+        val pdpRequest = lagPdpRequest(bruker, orgnumre, ressurs)
         sikkerLogger.info("PDP kall for $ressurs: $pdpRequest")
         val pdpResponseResult: Result<PdpResponse> =
             runCatching<PdpClient, PdpResponse> {

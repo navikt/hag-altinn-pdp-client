@@ -18,13 +18,12 @@ fun getToken(): String = "gyldig token"
 val pdpClient = PdpClient(
     baseUrl = "https://platform.tt02.altinn.no",
     subscriptionKey = "gyldig_subsriptionkey",
-    ressurs = "nav_sykepenger_inntektsmelding-nedlasting",
     getToken = ::getToken
 )
-// Sjekk at systembruker har tilgang til ressursen nav_sykepenger_inntektsmelding-nedlasting på en organisasjon
-val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjon("systembruker_id", "gyldig_orgnr") } // true / false
-// Sjekk at person har tilgang til ressursen nav_sykepenger_inntektsmelding-nedlasting på en organisasjon
-val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjon("fnr", "gyldig_orgnr") }  // true / false
+// Sjekk at systembruker har tilgang til en gyldig ressurs på en organisasjon
+val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjoner("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") } // true / false
+// Sjekk at person har tilgang til en gyldig ressurs på en organisasjon
+val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjoner("fnr", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") }  // true / false
 ```
 ### Henvendelser
 

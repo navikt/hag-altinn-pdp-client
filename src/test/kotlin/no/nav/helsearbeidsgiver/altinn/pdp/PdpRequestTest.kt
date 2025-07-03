@@ -9,7 +9,7 @@ class PdpRequestTest :
         test("Serialialiser request for person riktig") {
             val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), MockData.pdpPersonRequest)
             requestString shouldContain MockData.fnr
-            requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
+            requestString shouldContain "nav_system_sykepenger_inntektsmelding"
             requestString shouldContain "urn:altinn:person:identifier-no"
             MockData.orgnumre.forEach { requestString shouldContain it }
         }
@@ -17,7 +17,7 @@ class PdpRequestTest :
         test("Serialialiser request for systembruker riktig") {
             val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), MockData.pdpSystemRequest)
             requestString shouldContain MockData.systembrukerId
-            requestString shouldContain "nav_sykepenger_inntektsmelding-nedlasting"
+            requestString shouldContain "nav_system_sykepenger_inntektsmelding"
             requestString shouldContain "urn:altinn:systemuser:uuid"
             MockData.orgnumre.forEach { requestString shouldContain it }
         }

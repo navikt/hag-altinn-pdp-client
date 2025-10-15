@@ -10,6 +10,15 @@ For oversikt over altinn sitt pdp api se [altinn sin guide](https://docs.altinn.
 - Gyldig SubscriptionKey fra altinn for å nå pdp endepunktet (må kontakte altinn for å få dette)
 - Registrert ressurs i ressurs registeret til altinn
 
+### Publisere nye versjoner
+
+For å publisere snapshots, push til en branch som starter med `dev/`.
+Snapshot-versjonen er basert på `version` i `gradle.properties`. Ved `version=1.2.3` så vil workflow publisere en snapshot `1.2.3-SNAPSHOT`.
+Snapshot-versjoner overskrives for hvert push.
+
+For å publisere ny versjon, oppdater `version` i `gradle.properties` og push til branch `main`.
+Dersom versjon allerede eksisterer så vil workflow feile med `409 Conflict`.
+
 ### Klienten kan brukes slik
 ```kt
 // Funksjon for å hente en gyldig token fra altinn

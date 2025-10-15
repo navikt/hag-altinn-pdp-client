@@ -1,6 +1,7 @@
 package no.nav.helsearbeidsgiver.altinn.pdp
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class PdpRequest(
@@ -25,6 +26,8 @@ data class PdpRequest(
         val value: String,
         val dataType: String? = null,
     )
+
+    override fun toString(): String = Json.encodeToString(this)
 }
 
 sealed class Bruker(

@@ -20,10 +20,6 @@ repositories {
     mavenNav("*")
 }
 
-tasks.register("printVersion") {
-    println(project.version)
-}
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {

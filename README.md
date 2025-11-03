@@ -2,7 +2,13 @@
 
 Klient for å slå opp tilganger i altinn sitt PDP API
 
+### Bakgrunnsinformasjon
 For oversikt over altinn sitt pdp api se [altinn sin guide](https://docs.altinn.studio/nb/authorization/guides/resource-owner/integrating-link-service/#integrasjon-med-pdp) og [altinn sin dokumentasjon](https://docs.altinn.studio/nb/api/authorization/spec/#/Decision/post_authorize)
+
+Altinn bruker xacml standarden for å definere policyer, ressurser, requester og responser for tilgangskontroll.
+Denne klienten skjuler xacml detaljene for brukeren av klienten.
+
+For å se nærmere på hvordan xacml fungerer se altinn sin [xacml guide](https://docs.altinn.studio/nb/authorization/reference/xacml/) og [xacml spesifikasjonen til oasis](https://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html)
 
 ### Forutsetninger
 - Maskinporten klient/integrasjon med tilgang til scope: `altinn:authorization/authorize`

@@ -42,6 +42,15 @@ class PdpClientTest :
             ) shouldBe true
         }
 
+        test("Pdp multiRequest oppslag for systembruker med to orgnummer gir Permit") {
+            val pdpClient = mockPdpClient(HttpStatusCode.Created, pdpResponseString(listOf(Decision.Permit, Decision.Permit)))
+            pdpClient.systemHarRettighetForOrganisasjonerMulti(
+                MockData.systembrukerId,
+                MockData.orgnumre,
+                setOf(MockData.ressurs),
+            ) shouldBe true
+        }
+
         test("Pdp oppslag for systembruker med flere orgnumre gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
             pdpClient.systemHarRettighetForOrganisasjoner(

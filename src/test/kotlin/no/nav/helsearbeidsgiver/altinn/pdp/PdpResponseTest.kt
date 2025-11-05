@@ -10,10 +10,11 @@ class PdpResponseTest :
     StringSpec({
         "Deserialiser PDP respons til objekt med riktig enum type" {
             listOf(
-                ("permit" to Decision.Permit),
-                ("not-applicable" to Decision.NotApplicable),
-                ("indeterminate" to Decision.Indeterminate),
-                ("deny" to Decision.Deny),
+                ("permit" to listOf(Decision.Permit)),
+                ("not-applicable" to listOf(Decision.NotApplicable)),
+                ("indeterminate" to listOf(Decision.Indeterminate)),
+                ("deny" to listOf(Decision.Deny)),
+                ("multi-respons" to listOf(Decision.Permit, Decision.Permit, Decision.NotApplicable, Decision.NotApplicable)),
             ).forEach { (responseType, decision) ->
                 withClue("pdp response $responseType resulterer i Enum verdi ${Decision.Permit}") {
                     val validAltinnResponse = "pdp-response/$responseType.json".readResource()

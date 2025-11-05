@@ -12,9 +12,16 @@ object MockData {
     val ressurs = "nav_system_sykepenger_inntektsmelding"
     val pdpPersonRequest = lagPdpRequest(person, orgnumre, ressurs)
     val pdpSystemRequest = lagPdpRequest(system, orgnumre, ressurs)
+    val pdpSystemMultiRequest = lagPdpMultiRequest(system, orgnumre, setOf(ressurs))
     val permitResponseString: String =
         jsonConfig.encodeToString(
             PdpResponse.serializer(),
             PdpResponse(listOf(DecisionResult(Decision.Permit))),
         )
 }
+
+fun pdpResponseString(decisions: List<Decision>): String =
+    jsonConfig.encodeToString(
+        PdpResponse.serializer(),
+        PdpResponse(decisions.map { DecisionResult(it) }),
+    )

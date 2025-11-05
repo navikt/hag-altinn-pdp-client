@@ -18,6 +18,6 @@ enum class Decision {
     Deny,
 }
 
-fun PdpResponse.resultat() = response.first().decision
+fun PdpResponse.resultat() = response.map { it.decision }
 
-fun PdpResponse.harTilgang(): Boolean = resultat() == Decision.Permit
+fun PdpResponse.harTilgang(): Boolean = resultat().all{ it == Decision.Permit }

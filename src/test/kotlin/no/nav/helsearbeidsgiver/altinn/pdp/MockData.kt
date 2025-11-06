@@ -9,10 +9,11 @@ object MockData {
     val systembrukerId = "1234"
     val person = Person(fnr)
     val system = System(systembrukerId)
-    val ressurs = "nav_system_sykepenger_inntektsmelding"
-    val pdpPersonRequest = lagPdpRequest(person, orgnumre, ressurs)
-    val pdpSystemRequest = lagPdpRequest(system, orgnumre, ressurs)
-    val pdpSystemMultiRequest = lagPdpMultiRequest(system, orgnumre, setOf(ressurs))
+    val imRessurs = "nav_system_sykepenger_inntektsmelding"
+    val sykRessurs = "nav_system_sykepenger_sykmelding"
+    val pdpPersonRequest = lagPdpMultiRequest(person, orgnumre, setOf(imRessurs))
+    val pdpSystemRequest = lagPdpMultiRequest(system, orgnumre, setOf(imRessurs))
+    val pdpSystemMultiRequest = lagPdpMultiRequest(system, orgnumre, setOf(imRessurs, sykRessurs))
     val permitResponseString: String =
         jsonConfig.encodeToString(
             PdpResponse.serializer(),

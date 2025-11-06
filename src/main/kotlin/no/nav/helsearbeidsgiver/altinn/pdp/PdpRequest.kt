@@ -15,13 +15,12 @@ data class PdpRequest(
         val action: List<XacmlJsonCategoryExternal>,
         val resource: List<XacmlJsonCategoryExternal>,
         val multiRequests: MultiRequestsExternal? = null,
-        )
+    )
 
     @Serializable
     data class XacmlJsonCategoryExternal(
         val id: String? = null,
         val attribute: List<XacmlJsonAttributeExternal>,
-        val includeInResults: Boolean = true,
     )
 
     @Serializable
@@ -29,7 +28,6 @@ data class PdpRequest(
         val attributeId: String,
         val value: String,
         val dataType: String? = null,
-        val includeInResults: Boolean? = null,
     )
 
     @Serializable
@@ -57,4 +55,3 @@ class Person(
 class System(
     id: String,
 ) : Bruker(id, "urn:altinn:systemuser:uuid")
-

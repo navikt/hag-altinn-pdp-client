@@ -20,4 +20,4 @@ enum class Decision {
 
 fun PdpResponse.resultat() = response.map { it.decision }
 
-fun PdpResponse.harTilgang(): Boolean = resultat().all{ it == Decision.Permit }
+fun PdpResponse.harTilgang(): Boolean = resultat().all { it == Decision.Permit }

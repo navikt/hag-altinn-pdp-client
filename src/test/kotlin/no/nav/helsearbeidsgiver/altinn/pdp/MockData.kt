@@ -9,8 +9,8 @@ object MockData {
     val systembrukerId = "1234"
     val person = Person(fnr)
     val system = System(systembrukerId)
-    val imRessurs = "nav_system_sykepenger_inntektsmelding"
-    val sykRessurs = "nav_system_sykepenger_sykmelding"
+    val imRessurs = "nav_sykepenger_inntektsmelding"
+    val sykRessurs = "nav_sykepenger_sykmelding"
     val pdpPersonRequest = lagPdpMultiRequest(person, orgnumre, setOf(imRessurs))
     val pdpSystemRequest = lagPdpMultiRequest(system, orgnumre, setOf(imRessurs))
     val pdpSystemMultiRequest = lagPdpMultiRequest(system, orgnumre, setOf(imRessurs, sykRessurs))

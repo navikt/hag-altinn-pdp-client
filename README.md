@@ -35,10 +35,12 @@ val pdpClient = PdpClient(
     subscriptionKey = "gyldig_subsriptionkey",
     getToken = ::getToken
 )
-// Sjekk at systembruker har tilgang til en gyldig ressurs på en organisasjon
-val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjoner("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") } // true / false
-// Sjekk at person har tilgang til en gyldig ressurs på en organisasjon
-val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjoner("fnr", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") }  // true / false
+// Sjekk at systembruker har tilgang til en gyldig ressurs på flere organisasjoner
+val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjoner("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnr2"), "gyldigRessurs") } // true / false
+// Sjekk at systembruker har tilgang til to gyldige ressurser på flere organisasjoner
+val systembrukerFlereResurserResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjonerForRessurser("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnr2"), setOf("gyldigRessurs1", "gyldigRessurs2")) } // true / false
+// Sjekk at person har tilgang til en gyldig ressurs på flere organisasjoner
+val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjoner("fnr", setOf("gyldig_orgnr1", "gyldig_orgnr2"), "gyldigRessurs") }  // true / false
 ```
 ### Henvendelser
 

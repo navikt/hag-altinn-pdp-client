@@ -24,8 +24,8 @@ class PdpRequestTest :
         test("Serialialiser multiRequest for systembruker riktig") {
             val requestString = jsonConfig.encodeToString(PdpRequest.serializer(), MockData.pdpSystemMultiRequest)
             requestString shouldContain MockData.systembrukerId
-            requestString shouldContain "nav_system_sykepenger_inntektsmelding"
-            requestString shouldContain "nav_system_sykepenger_sykmelding"
+            requestString shouldContain "nav_sykepenger_inntektsmelding"
+            requestString shouldContain "nav_sykepenger_sykmelding"
             requestString shouldContain "urn:altinn:systemuser:uuid"
             MockData.orgnumre.forEach { requestString shouldContain it }
         }

@@ -1,5 +1,6 @@
 package no.nav.helsearbeidsgiver.altinn.pdp
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -13,10 +14,12 @@ data class PdpRequest(
         val accessSubject: List<XacmlJsonCategoryExternal>,
         val action: List<XacmlJsonCategoryExternal>,
         val resource: List<XacmlJsonCategoryExternal>,
+        val multiRequests: MultiRequestsExternal? = null,
     )
 
     @Serializable
     data class XacmlJsonCategoryExternal(
+        val id: String? = null,
         val attribute: List<XacmlJsonAttributeExternal>,
     )
 
@@ -25,6 +28,16 @@ data class PdpRequest(
         val attributeId: String,
         val value: String,
         val dataType: String? = null,
+    )
+
+    @Serializable
+    data class MultiRequestsExternal(
+        val requestReference: List<RequestReferenceExternal>,
+    )
+
+    @Serializable
+    data class RequestReferenceExternal(
+        val referenceId: List<String>,
     )
 
     override fun toString(): String = Json.encodeToString(this)
@@ -42,55 +55,3 @@ class Person(
 class System(
     id: String,
 ) : Bruker(id, "urn:altinn:systemuser:uuid")
-
-fun lagPdpRequest(
-    bruker: Bruker,
-    orgnrSet: Set<String>,
-    ressurs: String,
-) = PdpRequest(
-    request =
-        PdpRequest.XacmlJsonRequestExternal(
-            returnPolicyIdList = true,
-            accessSubject =
-                listOf(
-                    PdpRequest.XacmlJsonCategoryExternal(
-                        attribute =
-                            listOf(
-                                PdpRequest.XacmlJsonAttributeExternal(
-                                    attributeId = bruker.attributeId,
-                                    value = bruker.id,
-                                ),
-                            ),
-                    ),
-                ),
-            action =
-                listOf(
-                    PdpRequest.XacmlJsonCategoryExternal(
-                        attribute =
-                            listOf(
-                                PdpRequest.XacmlJsonAttributeExternal(
-                                    attributeId = "urn:oasis:names:tc:xacml:1.0:action:action-id",
-                                    value = "access",
-                                    dataType = "http://www.w3.org/2001/XMLSchema#string",
-                                ),
-                            ),
-                    ),
-                ),
-            resource =
-                orgnrSet.map { orgnr ->
-                    PdpRequest.XacmlJsonCategoryExternal(
-                        attribute =
-                            listOf(
-                                PdpRequest.XacmlJsonAttributeExternal(
-                                    attributeId = "urn:altinn:resource",
-                                    value = ressurs,
-                                ),
-                                PdpRequest.XacmlJsonAttributeExternal(
-                                    attributeId = "urn:altinn:organization:identifier-no",
-                                    value = orgnr,
-                                ),
-                            ),
-                    )
-                },
-        ),
-)

@@ -2,7 +2,13 @@
 
 Klient for å slå opp tilganger i altinn sitt PDP API
 
+### Bakgrunnsinformasjon
 For oversikt over altinn sitt pdp api se [altinn sin guide](https://docs.altinn.studio/nb/authorization/guides/resource-owner/integrating-link-service/#integrasjon-med-pdp) og [altinn sin dokumentasjon](https://docs.altinn.studio/nb/api/authorization/spec/#/Decision/post_authorize)
+
+Altinn bruker xacml standarden for å definere policyer, ressurser, requester og responser for tilgangskontroll.
+Denne klienten skjuler xacml detaljene for brukeren av klienten.
+
+For å se nærmere på hvordan xacml fungerer se altinn sin [xacml guide](https://docs.altinn.studio/nb/authorization/reference/xacml/) og [xacml spesifikasjonen til oasis](https://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html)
 
 ### Forutsetninger
 - Maskinporten klient/integrasjon med tilgang til scope: `altinn:authorization/authorize`
@@ -29,10 +35,12 @@ val pdpClient = PdpClient(
     subscriptionKey = "gyldig_subsriptionkey",
     getToken = ::getToken
 )
-// Sjekk at systembruker har tilgang til en gyldig ressurs på en organisasjon
-val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjoner("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") } // true / false
-// Sjekk at person har tilgang til en gyldig ressurs på en organisasjon
-val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjoner("fnr", setOf("gyldig_orgnr1", "gyldig_orgnrN"), "gyldigRessurs") }  // true / false
+// Sjekk at systembruker har tilgang til en gyldig ressurs på flere organisasjoner
+val systembrukerResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjoner("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnr2"), "gyldigRessurs") } // true / false
+// Sjekk at systembruker har tilgang til to gyldige ressurser på flere organisasjoner
+val systembrukerFlereResurserResultat: Boolean = runBlocking { pdpClient.systemHarRettighetForOrganisasjonerForRessurser("systembruker_id", setOf("gyldig_orgnr1", "gyldig_orgnr2"), setOf("gyldigRessurs1", "gyldigRessurs2")) } // true / false
+// Sjekk at person har tilgang til en gyldig ressurs på flere organisasjoner
+val personbrukerResultat: Boolean = runBlocking { pdpClient.personHarRettighetForOrganisasjoner("fnr", setOf("gyldig_orgnr1", "gyldig_orgnr2"), "gyldigRessurs") }  // true / false
 ```
 ### Henvendelser
 

@@ -9,27 +9,27 @@ class PdpClientTest :
     FunSpec({
         test("Pdp oppslag for personbruker gir Permit") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
-            pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs) shouldBe true
+            pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.imRessurs) shouldBe true
         }
 
         test("Håndterer hvis personbruker-kallet timer ut") {
             val pdpClient = mockPdpClient(HttpStatusCode.GatewayTimeout)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.imRessurs)
             }
         }
 
         test("Kaster feil ved Unauthorized for personbruker") {
             val pdpClient = mockPdpClient(HttpStatusCode.Unauthorized)
             shouldThrowExactly<PdpClientException> {
-                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, MockData.orgnumre, MockData.imRessurs)
             }
         }
 
         test("Kaster feil dersom man ikke gir organisasjonsnumre for personbruker") {
             val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
             shouldThrowExactly<IllegalArgumentException> {
-                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, emptySet(), MockData.ressurs)
+                pdpClient.personHarRettighetForOrganisasjoner(MockData.fnr, emptySet(), MockData.imRessurs)
             }
         }
 
@@ -38,16 +38,16 @@ class PdpClientTest :
             pdpClient.systemHarRettighetForOrganisasjoner(
                 MockData.systembrukerId,
                 setOf(MockData.orgnr),
-                MockData.ressurs,
+                MockData.imRessurs,
             ) shouldBe true
         }
 
         test("Pdp oppslag for systembruker med flere orgnumre gir Permit") {
-            val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
+            val pdpClient = mockPdpClient(HttpStatusCode.Created, pdpResponseString(listOf(Decision.Permit, Decision.Permit)))
             pdpClient.systemHarRettighetForOrganisasjoner(
                 MockData.systembrukerId,
                 MockData.orgnumre,
-                MockData.ressurs,
+                MockData.imRessurs,
             ) shouldBe true
         }
 
@@ -57,7 +57,7 @@ class PdpClientTest :
                 pdpClient.systemHarRettighetForOrganisasjoner(
                     MockData.systembrukerId,
                     MockData.orgnumre,
-                    MockData.ressurs,
+                    MockData.imRessurs,
                 )
             }
         }
@@ -68,18 +68,55 @@ class PdpClientTest :
                 pdpClient.systemHarRettighetForOrganisasjoner(
                     MockData.systembrukerId,
                     MockData.orgnumre,
-                    MockData.ressurs,
+                    MockData.imRessurs,
                 )
             }
         }
 
         test("Kaster feil dersom man ikke gir organisasjonsnumre for systembruker") {
-            val pdpClient = mockPdpClient(HttpStatusCode.Created, MockData.permitResponseString)
+            val pdpClient = mockPdpClient(HttpStatusCode.Created)
             shouldThrowExactly<IllegalArgumentException> {
                 pdpClient.systemHarRettighetForOrganisasjoner(
                     MockData.systembrukerId,
                     emptySet(),
-                    MockData.ressurs,
+                    MockData.imRessurs,
+                )
+            }
+        }
+
+        test("Pdp multiRequest oppslag for systembruker med to orgnummer og to ressurser gir Permit") {
+            val pdpClient =
+                mockPdpClient(
+                    HttpStatusCode.Created,
+                    pdpResponseString(listOf(Decision.Permit, Decision.Permit, Decision.Permit, Decision.Permit)),
+                )
+            pdpClient.systemHarRettighetForOrganisasjonerForRessurser(
+                MockData.systembrukerId,
+                MockData.orgnumre,
+                setOf(MockData.imRessurs, MockData.sykRessurs),
+            ) shouldBe true
+        }
+
+        test("Pdp multiRequest oppslag for systembruker med to orgnummer og to ressurser der en er deny gir Ikke Permit") {
+            val pdpClient =
+                mockPdpClient(
+                    HttpStatusCode.Created,
+                    pdpResponseString(listOf(Decision.Permit, Decision.Permit, Decision.Permit, Decision.Deny)),
+                )
+            pdpClient.systemHarRettighetForOrganisasjonerForRessurser(
+                MockData.systembrukerId,
+                MockData.orgnumre,
+                setOf(MockData.imRessurs, MockData.sykRessurs),
+            ) shouldBe false
+        }
+
+        test("Kaster feil dersom man ikke gir ressurser for systembruker") {
+            val pdpClient = mockPdpClient(HttpStatusCode.Created)
+            shouldThrowExactly<IllegalArgumentException> {
+                pdpClient.systemHarRettighetForOrganisasjonerForRessurser(
+                    MockData.systembrukerId,
+                    MockData.orgnumre,
+                    emptySet(),
                 )
             }
         }

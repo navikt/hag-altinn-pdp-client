@@ -10,16 +10,23 @@ class PdpResponseTest :
     StringSpec({
         "Deserialiser PDP respons til objekt med riktig enum type" {
             listOf(
-                ("permit" to listOf(Decision.Permit)),
-                ("not-applicable" to listOf(Decision.NotApplicable)),
-                ("indeterminate" to listOf(Decision.Indeterminate)),
-                ("deny" to listOf(Decision.Deny)),
-                ("multi-respons" to listOf(Decision.Permit, Decision.Permit, Decision.NotApplicable, Decision.NotApplicable)),
-            ).forEach { (responseType, decision) ->
+                Triple("permit", listOf(Decision.Permit), true),
+                Triple("not-applicable", listOf(Decision.NotApplicable), false),
+                Triple("indeterminate", listOf(Decision.Indeterminate), false),
+                Triple("deny", listOf(Decision.Deny), false),
+                Triple(
+                    "multi-respons",
+                    listOf(Decision.Permit, Decision.Permit, Decision.NotApplicable, Decision.NotApplicable),
+                    false,
+                ),
+                Triple("empty", emptyList(), false),
+            ).forEach { (responseType, resultat, tilgang) ->
                 withClue("pdp response $responseType resulterer i Enum verdi ${Decision.Permit}") {
                     val validAltinnResponse = "pdp-response/$responseType.json".readResource()
-                    val pdpResponse: PdpResponse = jsonConfig.decodeFromString(PdpResponse.serializer(), validAltinnResponse)
-                    pdpResponse.resultat() shouldBe decision
+                    val pdpResponse: PdpResponse =
+                        jsonConfig.decodeFromString(PdpResponse.serializer(), validAltinnResponse)
+                    pdpResponse.resultat() shouldBe resultat
+                    pdpResponse.harTilgang() shouldBe tilgang
                 }
             }
         }

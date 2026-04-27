@@ -28,6 +28,7 @@ data class PdpRequest(
         val attributeId: String,
         val value: String,
         val dataType: String? = null,
+        val includeInResult: Boolean? = null,
     )
 
     @Serializable

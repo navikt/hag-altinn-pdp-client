@@ -78,6 +78,19 @@ class PdpClient(
                 throw PdpClientException()
             }
         sikkerLogger.debug("PDP respons: $pdpResponseResult")
+        pdpResponseResult.getOrNull()?.let { pdpResponse ->
+            val deniedEntries = pdpResponse.denied()
+            if (deniedEntries.isNotEmpty()) {
+                val brukerId = bruker.id
+                deniedEntries.forEach { entry ->
+                    sikkerLogger.warn(
+                        "Bruker med id '$brukerId' mangler tilgang for organisasjon '${entry.orgnr}'" +
+                            (entry.ressurs?.let { " på ressurs '$it'" } ?: "") +
+                            " (decision: ${entry.decision})",
+                    )
+                }
+            }
+        }
         return pdpResponseResult
     }
 }

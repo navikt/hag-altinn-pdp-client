@@ -44,10 +44,12 @@ fun lagPdpMultiRequest(
                                 PdpRequest.XacmlJsonAttributeExternal(
                                     attributeId = "urn:altinn:resource",
                                     value = ressurs,
+                                    includeInResult = true,
                                 ),
                                 PdpRequest.XacmlJsonAttributeExternal(
                                     attributeId = "urn:altinn:organization:identifier-no",
                                     value = orgnr,
+                                    includeInResult = true,
                                 ),
                             ),
                     )

@@ -78,6 +78,9 @@ class PdpClient(
                 throw PdpClientException()
             }
         sikkerLogger.debug("PDP respons: $pdpResponseResult")
+        pdpResponseResult.getOrNull()?.also {
+            logger.debug("PDP respons har tilgang: ${it.harTilgang()}")
+        }
         return pdpResponseResult
     }
 }
